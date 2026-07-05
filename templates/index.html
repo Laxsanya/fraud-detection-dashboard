@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ScamShield AI</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<div class="container">
+
+<header>
+    <h1>🛡 ScamShield AI</h1>
+    <p>Intelligent Scam & Fraud Detection System</p>
+</header>
+
+<!-- ================= INPUT SECTION ================= -->
+<div class="glass-card">
+
+    <h2>Analyze Suspicious Content</h2>
+
+    <form action="/analyze" method="POST" enctype="multipart/form-data">
+
+        <label>📩 Scam Message</label>
+        <textarea name="message" placeholder="Paste WhatsApp, SMS or Email message here..."></textarea>
+
+        <label>💳 Transaction Details</label>
+        <textarea name="transaction" placeholder="Paste transaction details here..."></textarea>
+
+        <label>📷 Upload Screenshot</label>
+        <input type="file" name="image" accept=".png,.jpg,.jpeg">
+
+        <button type="submit">🔍 Analyze with ScamShield AI</button>
+
+    </form>
+
+</div>
+
+<!-- ================= RESULT SECTION ================= -->
+{% if result %}
+
+<div class="result-card">
+
+    <h2>🧠 AI Analysis Report</h2>
+
+    <div class="risk-circle">
+        <div class="circle">
+            <span>{{ result.score }}%</span>
+        </div>
+
+        <p class="risk-level" style="color:{{ result.color }};">
+            {{ result.level }}
+        </p>
+    </div>
+
+    <div class="section">
+        <h3>🚨 Why was this flagged?</h3>
+
+        {% if result.reasons %}
+        <ul>
+            {% for reason in result.reasons %}
+            <li>{{ reason }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No suspicious indicators detected.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>🛡 AI Recommendations</h3>
+
+        <ul>
+            {% for tip in result.tips %}
+            <li>{{ tip }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- PDF BUTTON -->
+    <a href="/download-report">
+        <button style="margin-top:15px;">
+            📄 Download PDF Report
+        </button>
+    </a>
+
+</div>
+
+{% endif %}
+
+<!-- ================= HISTORY SECTION ================= -->
+{% if history %}
+
+<div class="history-card">
+
+    <h2>📜 Recent Scans</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Risk</th>
+                <th>Level</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in history[:5] %}
+            <tr>
+                <td>{{ item.score }}%</td>
+
+                <td style="color: {{ item.color }}">
+                    {{ item.level }}
+                </td>
+
+                <td>
+                    {{ item.timestamp }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endif %}
+
+<!-- ================= FOOTER ================= -->
+<footer>
+    <p>© 2026 ScamShield AI • Developed using Flask & Python</p>
+</footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
